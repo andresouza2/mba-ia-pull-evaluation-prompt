@@ -59,6 +59,7 @@ Métricas Base:
 
 ✅ STATUS: APROVADO - Todas as métricas >= 0.9
 ```
+
 ---
 
 ## Tecnologias obrigatórias
@@ -290,7 +291,6 @@ python src/evaluate.py
 ## Entregável
 
 1. **Repositório público no GitHub** (fork do repositório base) contendo:
-
    - Todo o código-fonte implementado
    - Arquivo `prompts/bug_to_user_story_v2.yml` 100% preenchido e funcional
    - Arquivo `README.md` atualizado com:
@@ -298,19 +298,16 @@ python src/evaluate.py
 2. **README.md deve conter:**
 
    A) **Seção "Técnicas Aplicadas (Fase 2)"**:
-
    - Quais técnicas avançadas você escolheu para refatorar os prompts
    - Justificativa de por que escolheu cada técnica
    - Exemplos práticos de como aplicou cada técnica
 
    B) **Seção "Resultados Finais"**:
-
    - Link público do seu dashboard do LangSmith mostrando as avaliações
    - Screenshots das avaliações com as notas mínimas de 0.9 atingidas
    - Tabela comparativa: prompts ruins (v1) vs prompts otimizados (v2)
 
    C) **Seção "Como Executar"**:
-
    - Instruções claras e detalhadas de como executar o projeto
    - Pré-requisitos e dependências
    - Comandos para cada fase do projeto
@@ -318,7 +315,6 @@ python src/evaluate.py
 3. **Evidências no LangSmith**:
    - Link público (ou screenshots) do dashboard do LangSmith
    - Devem estar visíveis:
-
      - Dataset de avaliação com 15 exemplos
      - Execuções dos prompts v2 (otimizados) com notas ≥ 0.9
      - Tracing detalhado de pelo menos 3 exemplos
@@ -334,3 +330,166 @@ python src/evaluate.py
 - **Não altere os datasets de avaliação** - apenas os prompts em `prompts/bug_to_user_story_v2.yml`
 - **Itere, itere, itere** - é normal precisar de 3-5 iterações para atingir 0.9 em todas as métricas
 - **Documente seu processo** - a jornada de otimização é tão importante quanto o resultado final
+
+---
+
+## Técnicas Aplicadas (Fase 2)
+
+### 1) Few-shot Learning (obrigatória)
+
+**Por que escolhi:**
+
+- O prompt v1 era genérico e sem exemplos concretos, o que aumentava variabilidade e ambiguidade.
+- Few-shot reduz dispersão de estilo e melhora consistência entre saída esperada e avaliação automática.
+
+**Como apliquei:**
+
+- Adicionei 2 exemplos claros de entrada/saída no `system_prompt` de `prompts/bug_to_user_story_v2.yml`:
+  - Exemplo simples de e-commerce (botão de carrinho).
+  - Exemplo de segurança/API (controle de acesso em endpoint).
+- Os exemplos mostram explicitamente o formato final esperado: frase de User Story + seção de critérios.
+
+### 2) Role Prompting
+
+**Por que escolhi:**
+
+- Definir uma persona aumenta foco no tipo de decisão e linguagem esperada para backlog de produto.
+- Melhora helpfulness/clarity ao orientar o modelo para resultado acionável por time de desenvolvimento.
+
+**Como apliquei:**
+
+- Defini no prompt: "Você é um Senior Product Manager com foco em discovery, qualidade e clareza de backlog".
+- Incluí regras de comportamento para evitar invenções e manter aderência ao bug report.
+
+### 3) Skeleton of Thought
+
+**Por que escolhi:**
+
+- A tarefa exige transformar texto livre em estrutura consistente e verificável.
+- Um esqueleto de etapas reduz omissões e ajuda a cobrir edge cases.
+
+**Como apliquei:**
+
+- Estruturei um fluxo de 5 etapas no `system_prompt`:
+  1. Identificar persona e impacto.
+  2. Extrair falha principal.
+  3. Converter em objetivo mensurável.
+  4. Gerar critérios no padrão Dado/Quando/Então.
+  5. Adicionar contexto técnico só quando relevante.
+- Instruí o modelo a raciocinar internamente passo a passo e retornar somente a resposta final formatada.
+
+### Resultado esperado da otimização
+
+- Instruções claras e específicas.
+- Regras explícitas de saída.
+- Few-shot com exemplos de entrada/saída.
+- Tratamento de edge cases (bug incompleto e múltiplos problemas no mesmo relato).
+- Separação adequada entre `system_prompt` (regras e técnica) e `user_prompt` (entrada dinâmica `{bug_report}`).
+
+---
+
+## Resultados Finais
+
+### Link público no LangSmith
+
+- Prompt publicado (público): https://smith.langchain.com/prompts/bug_to_user_story_v2/46265c77?organizationId=5f0332b9-bcf3-4635-aa59-8a25ecab194a
+- Commit anterior do prompt (histórico): https://smith.langchain.com/prompts/bug_to_user_story_v2/4d15ca36?organizationId=5f0332b9-bcf3-4635-aa59-8a25ecab194a
+
+### Screenshots das avaliações
+
+- Status atual: o prompt foi publicado e está em iteração, mas ainda não atingiu >= 0.9 em todas as métricas.
+- Após atingir o critério, adicionar aqui:
+  - Screenshot do resumo de métricas com todas >= 0.9
+  - Screenshot do run no LangSmith mostrando os scores finais
+
+### Tabela comparativa: v1 vs v2
+
+| Versão | Helpfulness | Correctness | F1-Score | Clarity | Precision | Média | Status |
+|---|---:|---:|---:|---:|---:|---:|---|
+| v1 (exemplo ruim do enunciado) | 0.45 | 0.52 | 0.48 | 0.50 | 0.46 | 0.482 | Reprovado |
+| v2 (iteração atual) | 0.91 | 0.85 | 0.80 | 0.90 | 0.91 | 0.875 | Reprovado (faltam correctness e f1_score) |
+
+---
+
+## Como Executar
+
+### Pré-requisitos e dependências
+
+- Python 3.9+
+- Conta e API key do LangSmith
+- API key de um provedor de LLM (OpenAI ou Google)
+- Dependências do projeto:
+
+```bash
+python -m venv venv
+# Linux/macOS
+source venv/bin/activate
+# Windows PowerShell
+# .\\venv\\Scripts\\Activate.ps1
+
+pip install -r requirements.txt
+```
+
+### Configuração de ambiente
+
+1. Copie `.env.example` para `.env`.
+2. Preencha no `.env`:
+   - `LANGSMITH_API_KEY`
+   - `USERNAME_LANGSMITH_HUB` (ex.: `andre-dev`)
+   - `LLM_PROVIDER`, `LLM_MODEL`, `EVAL_MODEL`
+   - `OPENAI_API_KEY` ou `GOOGLE_API_KEY`
+
+### Comandos por fase
+
+1. Pull do prompt inicial:
+
+```bash
+python src/pull_prompts.py
+```
+
+2. Editar o prompt otimizado:
+
+- Arquivo: `prompts/bug_to_user_story_v2.yml`
+
+3. Push do prompt otimizado para o Hub:
+
+```bash
+python src/push_prompts.py
+```
+
+4. Avaliar métricas:
+
+```bash
+python src/evaluate.py
+```
+
+5. Validar testes de prompt:
+
+```bash
+pytest tests/test_prompts.py -v
+```
+
+6. Iterar até aprovação:
+
+- Ajustar prompt com base nas métricas abaixo de 0.9
+- Repetir push + avaliação até todas as métricas >= 0.9
+
+---
+
+## Evidências no LangSmith
+
+### Link público (ou screenshots)
+
+- Link do prompt público v2:
+  - https://smith.langchain.com/prompts/bug_to_user_story_v2/46265c77?organizationId=5f0332b9-bcf3-4635-aa59-8a25ecab194a
+
+### Checklist de evidências exigidas
+
+- [x] Dataset de avaliação com 15 exemplos (criado pelo `src/evaluate.py` a partir de `datasets/bug_to_user_story.jsonl`)
+- [ ] Execuções dos prompts v2 com notas >= 0.9 em todas as métricas
+- [ ] Tracing detalhado de pelo menos 3 exemplos
+
+### Observação de status
+
+- O projeto já possui push público, testes de validação e pipeline de avaliação funcionando.
+- A etapa pendente é concluir as iterações do prompt até atingir o critério final de aprovação (todas as 5 métricas >= 0.9).
