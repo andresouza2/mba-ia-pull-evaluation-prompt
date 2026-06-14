@@ -16,6 +16,9 @@ from dotenv import load_dotenv
 from langchain import hub
 from utils import save_yaml, check_env_vars, print_section_header
 
+from langsmith import Client
+from langchain_openai import OpenAI
+
 load_dotenv()
 
 PROMPT_ID = "leonanluppi/bug_to_user_story_v1"

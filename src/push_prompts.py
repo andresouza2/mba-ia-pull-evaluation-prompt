@@ -12,12 +12,42 @@ SIMPLIFICADO: Código mais limpo e direto ao ponto.
 
 import os
 import sys
+from pathlib import Path
 from dotenv import load_dotenv
-from langchain import hub
+from langsmith import Client
 from langchain_core.prompts import ChatPromptTemplate
 from utils import load_yaml, check_env_vars, print_section_header, validate_prompt_structure
 
 load_dotenv()
+
+
+def build_prompt_identifier(base_name: str) -> str:
+    """Monta o identificador do prompt no formato {username}/nome quando possível."""
+    username = os.getenv("USERNAME_LANGSMITH_HUB", "").strip()
+    if username:
+        return f"{username}/{base_name}"
+    return base_name
+
+
+def build_readme(prompt_name: str, prompt_data: dict) -> str:
+    """Gera readme do prompt para facilitar rastreabilidade no Hub."""
+    techniques = prompt_data.get("techniques_applied", [])
+    tags = prompt_data.get("tags", [])
+    created_at = prompt_data.get("created_at", "")
+    version = prompt_data.get("version", "")
+
+    lines = [
+        f"# {prompt_name}",
+        "",
+        prompt_data.get("description", ""),
+        "",
+        "## Metadados",
+        f"- Version: {version}",
+        f"- Created at: {created_at}",
+        f"- Tags: {', '.join(tags) if tags else 'n/a'}",
+        f"- Techniques: {', '.join(techniques) if techniques else 'n/a'}",
+    ]
+    return "\n".join(lines)
 
 
 def push_prompt_to_langsmith(prompt_name: str, prompt_data: dict) -> bool:

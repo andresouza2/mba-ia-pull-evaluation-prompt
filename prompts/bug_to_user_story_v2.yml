@@ -171,7 +171,6 @@ bug_to_user_story_v2:
     R7. Idioma: use o mesmo idioma do bug report.
 
     R8. Bug vazio, ilegível ou que não descreve um bug:
-        responda exatamente:
         "ERRO: entrada não contém um bug report válido."
 
     R9. Não exponha raciocínio interno.
