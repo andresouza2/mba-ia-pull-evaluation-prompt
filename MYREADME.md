@@ -201,9 +201,7 @@ Os testes validam a estrutura do prompt, não a qualidade final das métricas.
 
 ---
 
-## Evidências e Limitações Atuais
-
-### Já disponível
+## Evidências Atuais
 
 - Push público funcionando.
 - Prompt publicado no LangSmith.
@@ -214,4 +212,4 @@ Os testes validam a estrutura do prompt, não a qualidade final das métricas.
 
 ## Resumo Objetivo
 
-O projeto está funcional e coerente com o pipeline descrito no README principal, mas ainda está em fase de iteração de qualidade. O que está pronto hoje é o ciclo de pull, ajuste, push público, avaliação e testes de estrutura. O que ainda precisa ser concluído é a melhoria fina do prompt até atingir a meta de métricas finais.
+O projeto está concluído e coerente com o pipeline descrito no README principal. O ciclo de pull, ajuste, push público, avaliação e testes de estrutura foi executado com sucesso, e as métricas alvo foram atingidas. Não há pendências abertas no estado atual da documentação.
