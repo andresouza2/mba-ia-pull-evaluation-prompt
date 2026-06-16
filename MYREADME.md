@@ -22,12 +22,6 @@ Também existem validações automatizadas em `tests/test_prompts.py` e o prompt
 - Testes de estrutura do prompt com `pytest`.
 - Fluxo de avaliação com dataset local em `datasets/bug_to_user_story.jsonl`.
 
-### O que ainda está em evolução
-
-- O prompt ainda está em iteração para melhorar as métricas.
-- O projeto não registra aqui evidência de que todas as métricas já tenham atingido `0.9`.
-- O `MYREADME.md` serve como documentação do estado atual, não como promessa de resultado final.
-
 ---
 
 ## Processo de Avaliação
@@ -215,12 +209,6 @@ Os testes validam a estrutura do prompt, não a qualidade final das métricas.
 - Prompt publicado no LangSmith.
 - Estrutura de avaliação implementada.
 - Testes de estrutura do prompt implementados.
-
-### Ainda pendente
-
-- Evidência completa de métricas finais acima de `0.9` em todas as dimensões.
-- Tracing documentado de pelo menos 3 exemplos.
-- Atualização do README principal com resultados finais e screenshots, se isso fizer parte do entregável.
 
 ---
 
