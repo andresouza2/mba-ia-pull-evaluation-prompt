@@ -30,6 +30,24 @@ Também existem validações automatizadas em `tests/test_prompts.py` e o prompt
 
 ---
 
+## Processo de Avaliação
+
+O fluxo de validação foi acompanhado no LangSmith para observar tanto a lista de execuções quanto o detalhe de cada trace. Isso ajuda a confirmar se a saída do prompt está coerente com a estrutura esperada e se as métricas derivadas estão estáveis durante as iterações.
+
+### Visão geral das execuções
+
+![Lista de traces e runs no LangSmith](images/image_02.png)
+
+A captura acima mostra a lista de execuções da avaliação, com diferentes relatos de bug sendo processados e respostas geradas no formato de User Story.
+
+### Detalhe de uma avaliação
+
+![Detalhe do trace com output e métricas](images/image_01.png)
+
+Nesta visão detalhada, é possível inspecionar o conteúdo do output, o formato Markdown entregue pelo modelo e a leitura das métricas associadas à execução.
+
+---
+
 ## Técnicas Aplicadas (Fase 2)
 
 ### 1) Few-shot Learning
@@ -61,7 +79,7 @@ Também existem validações automatizadas em `tests/test_prompts.py` e o prompt
 - O `system_prompt` define a persona de um Product Manager sênior com visão técnica.
 - O prompt orienta o modelo a pensar no contexto de produto e execução.
 
-### 3) Estrutura Guiada / Skeleton de Saída
+### 3) Skeleton of Thought
 
 **Por que foi usado:**
 
@@ -70,8 +88,8 @@ Também existem validações automatizadas em `tests/test_prompts.py` e o prompt
 
 **Como está aplicado no projeto:**
 
-- O `system_prompt` define seções como contexto, classificação, User Story, critérios de aceitação, edge cases e validação de cobertura.
-- O modelo é instruído a organizar a resposta com base nessa estrutura.
+- O `system_prompt` orienta a resposta em etapas claras: identificar persona, extrair impacto, definir objetivo, montar critérios verificáveis e então adicionar contexto técnico quando fizer sentido.
+- O modelo é instruído a seguir uma estrutura progressiva, em vez de responder de forma livre ou improvisada.
 
 ### 4) Regras Explícitas de Comportamento
 
@@ -83,6 +101,12 @@ Também existem validações automatizadas em `tests/test_prompts.py` e o prompt
 
 - O prompt exige tratamento de múltiplos problemas, critérios em BDD e identificação de edge cases.
 - O YAML também guarda metadados como `tags`, `techniques` e `description`.
+
+### Resumo das técnicas do `v2`
+
+- `few-shot-learning`: reduz ambiguidade e demonstra o padrão de resposta esperado.
+- `role-prompting`: fixa a persona do modelo como um Senior Product Manager.
+- `skeleton-of-thought`: organiza o raciocínio e a resposta em passos claros, com saída mais previsível.
 
 ---
 

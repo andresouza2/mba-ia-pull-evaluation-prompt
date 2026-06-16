@@ -21,41 +21,42 @@ from langchain_openai import OpenAI
 
 load_dotenv()
 
-PROMPT_ID = "leonanluppi/bug_to_user_story_v1"
-OUTPUT_PATH = Path("prompts/raw_prompts.yml")
-
 
 def pull_prompts_from_langsmith():
-    """Faz pull do prompt no LangSmith Hub e retorna serialização"""
-    print_section_header("Pulling prompt from LangSmith")
+    """Faz pull dos prompts do LangSmith Prompt Hub e salva localmente."""
 
-    # valida variáveis obrigatórias
-    check_env_vars(
-        ["LANGCHAIN_API_KEY"]
-    )
+    # Conectar ao LangSmith e puxar os prompts
+    client = Client()
+    try:
+        print("Connecting to LangSmith...")
+        prompt = client.pull_prompt("leonanluppi/bug_to_user_story_v1")
+        model = OpenAI(model="gpt-4o-mini")
+        chain = prompt | model
 
-    # pull do prompt
-    prompt = hub.pull(PROMPT_ID)
+        result = chain.invoke({"bug_report": "O sistema trava quando o usuário tenta salvar um arquivo grande."})
 
-    # serialização nativa do LangChain
-    serialized_prompt = prompt.dict()
+        print(result)
 
-    return {
-        "id": PROMPT_ID,
-        "prompt": serialized_prompt,
-    }
+        return
+
+    except Exception as e:
+        print(f"Error pulling prompts: {e}")
+        sys.exit(1)
+
+    # Salvar os prompts localmente
+    output_path = Path("prompts/bug_to_user_story_v1.yml")
+    try:
+        print(f"Saving prompts to {output_path}...")
+        save_yaml(result, output_path)
+        print("Prompts saved successfully.")
+    except Exception as e:
+        print(f"Error saving prompts: {e}")
+        sys.exit(1)
 
 
 def main():
     """Função principal"""
-    prompt_data = pull_prompts_from_langsmith()
-
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-
-    save_yaml(prompt_data, OUTPUT_PATH)
-
-    print(f"\n✅ Prompt salvo com sucesso: {OUTPUT_PATH}")
-    return 0
+    pull_prompts_from_langsmith()
 
 
 if __name__ == "__main__":

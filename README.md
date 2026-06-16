@@ -1,5 +1,7 @@
 # Pull, Otimização e Avaliação de Prompts com LangChain e LangSmith
 
+Documentação complementar do processo, com screenshots e descrição das técnicas aplicadas: [MYREADME.md](MYREADME.md).
+
 ## Objetivo
 
 Você deve entregar um software capaz de:
